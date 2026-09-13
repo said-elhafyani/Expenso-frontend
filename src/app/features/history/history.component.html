@@ -1,0 +1,61 @@
+<div class="bg-surface rounded-3xl p-6 border border-slate-100 shadow-sm animate-fade-in">
+    <!-- Filtres -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 pb-6 border-b border-slate-100">
+        <div class="relative w-full md:w-96">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" [(ngModel)]="searchTerm" (input)="filterHistory()" placeholder="Rechercher une raison..." class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:outline-none text-sm">
+        </div>
+        
+        <div class="flex gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+            <select [(ngModel)]="catFilter" (change)="filterHistory()" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-primary">
+                <option value="all">Toutes les catégories</option>
+                <option value="Alimentation">Alimentation</option>
+                <option value="Transport">Transport</option>
+                <option value="Logement">Logement</option>
+                <option value="Loisirs">Loisirs</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Autres">Autres</option>
+            </select>
+            <input type="month" [(ngModel)]="monthFilter" (change)="filterHistory()" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-primary">
+        </div>
+    </div>
+
+    <!-- Tableau -->
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-slate-400 text-sm border-b border-slate-100">
+                    <th class="pb-3 font-medium">Date</th>
+                    <th class="pb-3 font-medium">Catégorie</th>
+                    <th class="pb-3 font-medium">Raison</th>
+                    <th class="pb-3 font-medium text-right">Montant</th>
+                    <th class="pb-3 font-medium text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-sm">
+                <tr *ngFor="let exp of filteredExpenses" class="border-b border-slate-50 hover:bg-slate-50 transition-colors group">
+                    <td class="py-4 text-slate-500">{{ exp.date | date:'dd MMM yyyy' }}</td>
+                    <td class="py-4">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium {{ getConf(exp.category).bg }} {{ getConf(exp.category).text }}">
+                            <i class="fa-solid {{ getConf(exp.category).icon }}"></i> {{ exp.category }}
+                        </span>
+                    </td>
+                    <td class="py-4 font-medium text-slate-800">{{ exp.reason }}</td>
+                    <td class="py-4 font-bold text-right" [ngClass]="exp.type === 'INCOME' ? 'text-emerald-500' : 'text-slate-800'">
+                        {{ exp.type === 'INCOME' ? '+' : '-' }}{{ exp.amount | number:'1.2-2' }} DH
+                    </td>
+                    <td class="py-4 text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="text-slate-400 hover:text-red-500 mx-1" (click)="deleteExpense(exp.id)" title="Supprimer">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div *ngIf="filteredExpenses.length === 0" class="text-center py-10 text-slate-500 animate-fade-in">
+            <i class="fa-solid fa-receipt text-4xl mb-3 opacity-50"></i>
+            <p>Aucune dépense trouvée.</p>
+        </div>
+    </div>
+</div>

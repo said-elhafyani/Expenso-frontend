@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Suivi des Dépenses - Dashboard</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Configuration Tailwind personnalisée -->
+  <script>
+      tailwind.config = {
+          theme: {
+              extend: {
+                  fontFamily: {
+                      sans: ['Outfit', 'sans-serif'],
+                  },
+                  colors: {
+                      primary: '#4f46e5', // Indigo 600
+                      secondary: '#9333ea', // Purple 600
+                      accent: '#f43f5e', // Rose 500
+                      background: '#f8fafc',
+                      surface: '#ffffff',
+                  },
+                  animation: {
+                      'fade-in': 'fadeIn 0.3s ease-out',
+                      'slide-up': 'slideUp 0.4s ease-out',
+                  },
+                  keyframes: {
+                      fadeIn: {
+                          '0%': { opacity: '0' },
+                          '100%': { opacity: '1' },
+                      },
+                      slideUp: {
+                          '0%': { opacity: '0', transform: 'translateY(20px)' },
+                          '100%': { opacity: '1', transform: 'translateY(0)' },
+                      }
+                  }
+              }
+          }
+      }
+  </script>
+</head>
+<body class="antialiased font-sans h-screen flex overflow-hidden selection:bg-primary selection:text-white">
+  <app-root class="flex w-full h-full"></app-root>
+</body>
+</html>
