@@ -1,5 +1,9 @@
 export interface Category {
-  id: number;
+  id?: number;
   name: string;
-  description: string;
+  description?: string;
+  type: 'EXPENSE' | 'INCOME';
+  isGlobal?: boolean;
+  icon?: string;
+  color?: string;
 }

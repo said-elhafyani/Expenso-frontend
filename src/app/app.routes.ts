@@ -3,7 +3,10 @@ import { authGuard } from './core/guards/auth.guard';
 import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { 
+    path: '', 
+    loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent) 
+  },
   {
     path: 'login',
     loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)
@@ -23,13 +26,19 @@ export const routes: Routes = [
     loadComponent: () => import('./features/history/history.component').then(m => m.HistoryComponent)
   },
   {
-    path: 'stats',
+    path: 'categories',
     canActivate: [authGuard],
-    loadComponent: () => import('./features/stats/stats.component').then(m => m.StatsComponent)
+    loadComponent: () => import('./features/categories/categories.component').then(m => m.CategoriesComponent)
   },
+
   {
     path: 'admin',
     canActivate: [adminGuard],
     loadComponent: () => import('./features/admin/admin.component').then(m => m.AdminComponent)
+  },
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent)
   }
 ];

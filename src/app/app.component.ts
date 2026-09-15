@@ -4,7 +4,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MockDataService, TransactionType } from './core/services/mock-data.service';
 import { AuthService } from './core/services/auth.service';
+import { CategoryService } from './core/services/category.service';
+import { ExpenseService } from './core/services/expense.service';
 import { filter } from 'rxjs/operators';
+import { ExpenseRequest } from './core/models/expense.model';
 
 @Component({
   selector: 'app-root',
@@ -26,11 +29,24 @@ export class AppComponent implements OnInit {
     note: ''
   };
 
-  expenseCategories: string[] = [];
-  incomeCategories: string[] = [];
+  get expenseCategories(): string[] {
+    return Object.keys(this.mockService.categoryConfig)
+      .filter(k => this.mockService.categoryConfig[k].type === 'EXPENSE');
+  }
+
+  get incomeCategories(): string[] {
+    return Object.keys(this.mockService.categoryConfig)
+      .filter(k => this.mockService.categoryConfig[k].type === 'INCOME');
+  }
   currentUser: any = null;
 
-  constructor(private mockService: MockDataService, private router: Router, public authService: AuthService) {
+  constructor(
+    private mockService: MockDataService, 
+    private router: Router, 
+    public authService: AuthService,
+    private categoryService: CategoryService,
+    private expenseService: ExpenseService
+  ) {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
@@ -46,20 +62,38 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.expenseCategories = Object.keys(this.mockService.categoryConfig)
-      .filter(k => this.mockService.categoryConfig[k].type === 'EXPENSE');
-    
-    this.incomeCategories = Object.keys(this.mockService.categoryConfig)
-      .filter(k => this.mockService.categoryConfig[k].type === 'INCOME');
+    // Getters handle the categories dynamically
     
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
+      if (user) {
+        this.loadRealCategories();
+      }
+    });
+  }
+
+  loadRealCategories() {
+    this.categoryService.getAllCategories().subscribe({
+      next: (cats) => {
+        this.mockService.clearCategoryConfig();
+        cats.forEach(c => {
+          this.mockService.addCategoryConfig(c.name, {
+            icon: c.icon || 'fa-tags',
+            color: c.color || '#6366f1',
+            bg: `bg-[${c.color || '#6366f1'}]/10`,
+            text: `text-[${c.color || '#6366f1'}]`,
+            type: c.type
+          }, c.id);
+        });
+        // Getters automatically reflect the changes
+      },
+      error: (err) => console.error('Erreur chargement des catégories:', err)
     });
   }
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 
   toggleMobileMenu() {
@@ -74,6 +108,13 @@ export class AppComponent implements OnInit {
     this.isModalOpen = true;
     if (!this.newTransaction.date) {
       this.newTransaction.date = new Date().toISOString().split('T')[0];
+    }
+    if (this.newTransaction.type === 'EXPENSE' && this.expenseCategories.length > 0) {
+      this.newTransaction.category = this.expenseCategories[0];
+    } else if (this.newTransaction.type === 'INCOME' && this.incomeCategories.length > 0) {
+      this.newTransaction.category = this.incomeCategories[0];
+    } else {
+      this.newTransaction.category = '';
     }
   }
 
@@ -91,22 +132,42 @@ export class AppComponent implements OnInit {
 
   setType(type: TransactionType) {
     this.newTransaction.type = type;
-    this.newTransaction.category = type === 'EXPENSE' ? 'Alimentation' : 'Salaire';
+    if (type === 'EXPENSE' && this.expenseCategories.length > 0) {
+      this.newTransaction.category = this.expenseCategories[0];
+    } else if (type === 'INCOME' && this.incomeCategories.length > 0) {
+      this.newTransaction.category = this.incomeCategories[0];
+    } else {
+      this.newTransaction.category = '';
+    }
   }
 
   onSubmit(event: Event) {
     event.preventDefault();
     if (this.newTransaction.amount && this.newTransaction.date && this.newTransaction.reason) {
-      this.mockService.addExpense({
-        id: Date.now(),
+      const catConfig = this.mockService.categoryConfig[this.newTransaction.category];
+      if (!catConfig || !catConfig.id) {
+        console.error('Category ID not found for', this.newTransaction.category);
+        return;
+      }
+
+      const req: ExpenseRequest = {
         amount: this.newTransaction.amount,
-        date: this.newTransaction.date,
-        category: this.newTransaction.category,
+        expenseDate: this.newTransaction.date,
         reason: this.newTransaction.reason,
-        type: this.newTransaction.type,
-        note: this.newTransaction.note
+        note: this.newTransaction.note,
+        categoryId: catConfig.id
+      };
+
+      this.expenseService.createExpense(req).subscribe({
+        next: () => {
+          this.mockService.triggerRefresh();
+          this.closeModal();
+        },
+        error: (err) => {
+          console.error('Error creating expense', err);
+          alert('Erreur lors de la création de la transaction');
+        }
       });
-      this.closeModal();
     }
   }
 }

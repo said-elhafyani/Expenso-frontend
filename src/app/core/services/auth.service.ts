@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
-const AUTH_API = 'http://localhost:8080/api/auth/';
+const AUTH_API = environment.apiUrl + '/auth/';
 const USER_KEY = 'auth-user';
 
 @Injectable({
@@ -33,7 +34,7 @@ export class AuthService {
       name: user.name,
       email: user.email,
       password: user.password
-    });
+    }, { responseType: 'text' });
   }
 
   logout(): void {

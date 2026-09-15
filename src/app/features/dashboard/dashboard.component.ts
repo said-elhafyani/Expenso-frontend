@@ -1,7 +1,10 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { MockDataService, MockTransaction } from '../../core/services/mock-data.service';
+import { FormsModule } from '@angular/forms';
+import { MockDataService } from '../../core/services/mock-data.service';
+import { ExpenseService } from '../../core/services/expense.service';
+import { ExpenseResponse } from '../../core/models/expense.model';
 import { Subscription } from 'rxjs';
 
 declare var Chart: any;
@@ -9,31 +12,81 @@ declare var Chart: any;
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   providers: [DecimalPipe],
   templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   loading = false;
   
-  // Vue dashboard
+  // Vue dashboard global
   dashTotalExpenses = 0;
   dashTotalIncomes = 0;
   dashBalance = 0;
   dashAverage = 0;
   dashCount = 0;
   
-  categoryTotals: {category: string, amount: number, pct: number}[] = [];
-  recentTransactions: MockTransaction[] = [];
+  // Filtres d'analyse détaillée
+  selectedType = 'EXPENSE';
+  startDate = '2026-09-01';
+  endDate = '2026-09-30';
+  selectedCategory = 'all';
+  get expenseCategories(): string[] {
+    return Object.keys(this.mockService.categoryConfig)
+        .filter(k => this.mockService.categoryConfig[k].type === 'EXPENSE');
+  }
+
+  get incomeCategories(): string[] {
+    return Object.keys(this.mockService.categoryConfig)
+        .filter(k => this.mockService.categoryConfig[k].type === 'INCOME');
+  }
+  
+  // Données filtrées pour le graphe
+  filteredSum = 0;
+  categoryTotals: {category: string, amount: number, pct: number, color: string}[] = [];
+  
+  chartColors = [
+    '#6366f1', '#10b981', '#f59e0b', '#ec4899', 
+    '#3b82f6', '#8b5cf6', '#14b8a6', '#ef4444', 
+    '#f97316', '#0ea5e9', '#84cc16', '#eab308'
+  ];
+  
+  recentTransactions: ExpenseResponse[] = [];
   
   myChart: any = null;
   private sub: Subscription | null = null;
+  private refreshSub: Subscription | null = null;
+  private allTransactions: ExpenseResponse[] = [];
 
-  constructor(public mockService: MockDataService, private decimalPipe: DecimalPipe) {}
+  constructor(
+    public mockService: MockDataService, 
+    private decimalPipe: DecimalPipe,
+    private expenseService: ExpenseService
+  ) {}
 
   ngOnInit(): void {
-    this.sub = this.mockService.expenses$.subscribe(transactions => {
-      this.calculateDashboard(transactions);
+    // Getters handle the categories dynamically
+
+    this.loadData();
+    this.refreshSub = this.mockService.refreshDashboard$.subscribe(() => {
+      this.loadData();
+    });
+  }
+
+  loadData() {
+    this.loading = true;
+    this.sub?.unsubscribe();
+    this.sub = this.expenseService.getAllExpenses().subscribe({
+      next: (transactions) => {
+        this.allTransactions = transactions;
+        this.calculateDashboardGlobals();
+        this.applyFilters();
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Erreur chargement des dépenses', err);
+        this.loading = false;
+      }
     });
   }
 
@@ -43,40 +96,68 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     if(this.sub) this.sub.unsubscribe();
+    if(this.refreshSub) this.refreshSub.unsubscribe();
     if(this.myChart) this.myChart.destroy();
   }
 
-  calculateDashboard(allTransactions: MockTransaction[]) {
+  // Calcule les indicateurs globaux du mois courant
+  calculateDashboardGlobals() {
     const CURRENT_MONTH = '2026-09';
     
     // Calcul du Solde Actuel (tous les mois)
-    const allIncomes = allTransactions.filter(t => t.type === 'INCOME').reduce((s, t) => s + t.amount, 0);
-    const allExpenses = allTransactions.filter(t => t.type === 'EXPENSE').reduce((s, t) => s + t.amount, 0);
+    const allIncomes = this.allTransactions.filter(t => t.category?.type === 'INCOME').reduce((s, t) => s + t.amount, 0);
+    const allExpenses = this.allTransactions.filter(t => t.category?.type === 'EXPENSE').reduce((s, t) => s + t.amount, 0);
     this.dashBalance = allIncomes - allExpenses;
 
-    const currentTransactions = allTransactions.filter(e => e.date.startsWith(CURRENT_MONTH));
-    const currentExpenses = currentTransactions.filter(e => e.type === 'EXPENSE');
-    const currentIncomes = currentTransactions.filter(e => e.type === 'INCOME');
+    const currentTransactions = this.allTransactions.filter(e => e.expenseDate.startsWith(CURRENT_MONTH));
+    const currentExpenses = currentTransactions.filter(e => e.category?.type === 'EXPENSE');
+    const currentIncomes = currentTransactions.filter(e => e.category?.type === 'INCOME');
     
     this.dashTotalExpenses = currentExpenses.reduce((sum, e) => sum + e.amount, 0);
     this.dashTotalIncomes = currentIncomes.reduce((sum, e) => sum + e.amount, 0);
     this.dashAverage = this.dashTotalExpenses / 30; // Moyenne de dépense par jour
     this.dashCount = currentTransactions.length;
 
-    // Categories (seulement les dépenses pour le graphe)
+    // Recent 4 (toutes transactions du mois)
+    this.recentTransactions = [...currentTransactions]
+      .sort((a,b) => new Date(b.expenseDate).getTime() - new Date(a.expenseDate).getTime())
+      .slice(0, 4);
+  }
+
+  // Applique les filtres sur la section Analyse
+  onFilterChange() {
+    this.applyFilters();
+  }
+
+  onTypeChange() {
+    this.selectedCategory = 'all';
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    let filtered = this.allTransactions.filter(t => t.expenseDate >= this.startDate && t.expenseDate <= this.endDate);
+    filtered = filtered.filter(t => t.category?.type === this.selectedType);
+    
+    if (this.selectedCategory !== 'all') {
+        filtered = filtered.filter(t => t.category?.name === this.selectedCategory);
+    }
+    
+    this.filteredSum = filtered.reduce((sum, t) => sum + t.amount, 0);
+
     const catMap = new Map<string, number>();
-    currentExpenses.forEach(e => {
-      catMap.set(e.category, (catMap.get(e.category) || 0) + e.amount);
+    filtered.forEach(e => {
+      const catName = e.category?.name || 'Inconnu';
+      catMap.set(catName, (catMap.get(catName) || 0) + e.amount);
     });
     
-    this.categoryTotals = Array.from(catMap.entries())
-      .map(([cat, amount]) => ({ category: cat, amount, pct: (amount/this.dashTotalExpenses)*100 }))
-      .sort((a,b) => b.amount - a.amount);
-
-    // Recent 4 (toutes transactions)
-    this.recentTransactions = [...currentTransactions]
-      .sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-      .slice(0, 4);
+    const entries = Array.from(catMap.entries()).sort((a,b) => b[1] - a[1]);
+    
+    this.categoryTotals = entries.map(([cat, amount], index) => ({ 
+          category: cat, 
+          amount, 
+          pct: this.filteredSum > 0 ? (amount/this.filteredSum)*100 : 0,
+          color: this.chartColors[index % this.chartColors.length]
+      }));
 
     if (this.myChart) {
       this.updateChart();
@@ -92,7 +173,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const ctx = canvas.getContext('2d');
     const labels = this.categoryTotals.map(c => c.category);
     const amounts = this.categoryTotals.map(c => c.amount);
-    const bgColors = labels.map(label => this.mockService.categoryConfig[label]?.color || '#cbd5e1');
+    const bgColors = this.categoryTotals.map(c => c.color);
 
     if (this.myChart) {
         this.myChart.data.labels = labels;
@@ -107,7 +188,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
                 datasets: [{
                     data: amounts,
                     backgroundColor: bgColors,
-                    borderWidth: 0,
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
                     hoverOffset: 4
                 }]
             },
@@ -142,7 +224,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return new Intl.NumberFormat('fr-MA', { style: 'currency', currency: 'MAD' }).format(amount).replace('MAD', 'DH');
   }
 
-  getConf(cat: string) {
-    return this.mockService.categoryConfig[cat] || this.mockService.categoryConfig['Autres'];
+  getConf(cat: string | undefined) {
+    if (!cat) return { icon: 'fa-tags', color: '#6366f1', text: 'text-indigo-500', bg: 'bg-indigo-100' };
+    return this.mockService.categoryConfig[cat] || { icon: 'fa-tags', color: '#6366f1', text: 'text-indigo-500', bg: 'bg-indigo-100' };
   }
 }
