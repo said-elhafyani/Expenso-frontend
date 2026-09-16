@@ -23,4 +23,8 @@ export class ExpenseService {
   deleteExpense(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  getAdminUserExpenses(userId: number): Observable<ExpenseResponse[]> {
+    return this.http.get<ExpenseResponse[]>(`${environment.apiUrl}/admin/users/${userId}/expenses`);
+  }
 }

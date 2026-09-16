@@ -5,11 +5,12 @@ import { MockDataService } from '../../core/services/mock-data.service';
 import { ExpenseService } from '../../core/services/expense.service';
 import { ExpenseResponse } from '../../core/models/expense.model';
 import { Subscription } from 'rxjs';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './history.component.html'
 })
 export class HistoryComponent implements OnInit, OnDestroy {
@@ -31,14 +32,22 @@ export class HistoryComponent implements OnInit, OnDestroy {
   
   private sub: Subscription | null = null;
   private refreshSub: Subscription | null = null;
+  adminViewUserId: number | null = null;
 
   constructor(
     public mockService: MockDataService,
-    private expenseService: ExpenseService
+    private expenseService: ExpenseService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
-    this.loadData();
+    this.route.queryParams.subscribe(params => {
+      if (params['userId']) {
+        this.adminViewUserId = +params['userId'];
+      }
+      this.loadData();
+    });
+    
     this.refreshSub = this.mockService.refreshDashboard$.subscribe(() => {
       this.loadData();
     });
@@ -46,7 +55,11 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
   loadData() {
     this.sub?.unsubscribe();
-    this.sub = this.expenseService.getAllExpenses().subscribe({
+    const obs$ = this.adminViewUserId 
+      ? this.expenseService.getAdminUserExpenses(this.adminViewUserId)
+      : this.expenseService.getAllExpenses();
+
+    this.sub = obs$.subscribe({
       next: (expenses) => {
         this.allExpenses = expenses;
         this.filterHistory();

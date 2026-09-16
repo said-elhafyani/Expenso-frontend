@@ -1,125 +1,163 @@
-<div class="max-w-6xl mx-auto animate-fade-in">
-    <!-- Header Page -->
-    <div class="flex justify-between items-center mb-8">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-800">Gestion des Catégories</h1>
-            <p class="text-slate-500 text-sm mt-1">Personnalisez vos catégories de dépenses et revenus.</p>
+<div class="bg-surface dark:bg-transparent rounded-t-[2rem] md:rounded-3xl px-5 py-6 md:p-6 md:border-none md:shadow-none animate-fade-in max-w-6xl mx-auto md:max-w-none">
+    <!-- Header Page (Nouveau Design Exact) -->
+    <div class="flex justify-between items-start mb-6 mt-2 px-1">
+        <div class="flex gap-3">
+            <div class="w-10 h-10 bg-indigo-100/50 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 mt-1">
+                <i class="fa-solid fa-border-all text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-[22px] font-display font-bold text-slate-800 dark:text-white leading-tight">Gestion des<br>Catégories</h1>
+                <p class="text-slate-500 dark:text-slate-400 text-[11px] leading-snug mt-1.5 max-w-[180px]">Personnalisez vos catégories de dépenses et revenus.</p>
+            </div>
         </div>
-        <button (click)="openModal()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-white font-medium transition-all shadow-md shadow-indigo-200 flex items-center gap-2">
-            <i class="fa-solid fa-plus"></i> Nouvelle Catégorie
+        <button (click)="openModal()" class="bg-gradient-to-r from-[#8b5cf6] to-[#a855f7] hover:opacity-90 text-white font-bold transition-all shadow-[0_8px_20px_rgba(139,92,246,0.3)] dark:shadow-[0_8px_20px_rgba(139,92,246,0.2)] flex items-center gap-2 px-4 py-3 rounded-[1rem] flex-shrink-0 text-sm mt-1">
+            <i class="fa-solid fa-plus font-normal"></i>
+            <span class="text-left text-xs leading-tight">Nouvelle<br>Catégorie</span>
         </button>
     </div>
 
     <!-- Loading State -->
     <div *ngIf="isLoading" class="flex justify-center items-center py-20">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
     </div>
 
-    <!-- Tabs -->
-    <div *ngIf="!isLoading" class="flex gap-4 mb-6 border-b border-slate-200">
+    <!-- Tabs (Exact Mockup) -->
+    <div *ngIf="!isLoading" class="flex gap-1 mb-6 bg-slate-50 dark:bg-slate-800/60 p-1.5 rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-slate-700/50">
         <button (click)="currentTab = 'EXPENSE'" 
-                class="pb-3 px-4 font-medium transition-colors border-b-2 -mb-[1px]"
-                [ngClass]="currentTab === 'EXPENSE' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'">
-            Dépenses
+                class="flex-1 py-2 px-4 font-bold rounded-full transition-all duration-300 flex items-center justify-center gap-3 text-sm"
+                [ngClass]="currentTab === 'EXPENSE' ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white shadow-sm' : 'bg-transparent text-slate-500 dark:text-slate-400'">
+            Dépenses 
+            <span class="w-6 h-6 flex items-center justify-center rounded-full text-[10px] font-bold" [ngClass]="currentTab === 'EXPENSE' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'">{{ expenseCount }}</span>
         </button>
         <button (click)="currentTab = 'INCOME'" 
-                class="pb-3 px-4 font-medium transition-colors border-b-2 -mb-[1px]"
-                [ngClass]="currentTab === 'INCOME' ? 'border-emerald-500 text-emerald-500' : 'border-transparent text-slate-500 hover:text-slate-700'">
-            Revenus
+                class="flex-1 py-2 px-4 font-bold rounded-full transition-all duration-300 flex items-center justify-center gap-3 text-sm"
+                [ngClass]="currentTab === 'INCOME' ? 'bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] text-white shadow-sm' : 'bg-transparent text-slate-500 dark:text-slate-400'">
+            Revenus 
+            <span class="w-6 h-6 flex items-center justify-center rounded-full text-[10px] font-bold" [ngClass]="currentTab === 'INCOME' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'">{{ incomeCount }}</span>
         </button>
     </div>
 
-    <!-- Grille des Catégories -->
-    <div *ngIf="!isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Grille des Catégories (Espacement réduit) -->
+    <div *ngIf="!isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
         
-        <div *ngFor="let cat of filteredCategories" class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden">
+        <div *ngFor="let cat of filteredCategories; let i = index" 
+             class="bg-white dark:bg-slate-900 rounded-[1.2rem] p-3.5 shadow-[0_2px_10px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.4)] transition-all group relative animate-fade-in flex items-center justify-between border border-slate-100 dark:border-slate-800"
+             [style.animation-delay]="i * 50 + 'ms'">
+             
+            <!-- Border Left indicator -->
+            <div class="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-[1.2rem] rounded-r-full" [style.backgroundColor]="cat.color"></div>
+             
             <!-- Badge Global / Perso -->
-            <div class="absolute top-4 right-4 flex items-center gap-2">
-                <div class="text-xs font-bold px-2 py-1 rounded-md"
-                     [ngClass]="cat.isGlobal ? 'bg-indigo-50 text-indigo-500' : 'bg-slate-50 text-slate-500'">
-                    {{ cat.isGlobal ? 'Globale' : 'Personnelle' }}
-                </div>
-                
-                <!-- Actions -->
-                <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity" *ngIf="isAdmin || !cat.isGlobal">
-                    <button (click)="openModal(cat)" class="w-7 h-7 rounded bg-indigo-50 text-primary hover:bg-indigo-100 flex items-center justify-center transition-colors shadow-sm">
-                        <i class="fa-solid fa-pen text-xs"></i>
-                    </button>
-                    <button (click)="deleteCategory(cat)" class="w-7 h-7 rounded bg-red-50 text-red-500 hover:bg-red-100 flex items-center justify-center transition-colors shadow-sm">
-                        <i class="fa-solid fa-trash text-xs"></i>
-                    </button>
-                </div>
+            <div class="absolute top-3.5 right-12 text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                 [ngClass]="cat.isGlobal ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 dark:text-emerald-400' : 'bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400'">
+                <i class="fa-solid fa-globe mr-1" *ngIf="cat.isGlobal"></i>
+                <i class="fa-solid fa-user mr-1" *ngIf="!cat.isGlobal"></i>
+                {{ cat.isGlobal ? 'Globale' : 'Perso' }}
             </div>
             
-            <div class="flex items-center gap-4 mb-4">
-                <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-slate-50"
-                     [style.backgroundColor]="cat.color + '20'"
+            <div class="flex items-center gap-4 flex-1 pl-1">
+                <!-- Icon container -->
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl flex-shrink-0"
+                     [style.backgroundColor]="cat.color + '25'"
                      [style.color]="cat.color">
                     <i class="fa-solid {{ cat.icon || 'fa-tags' }}"></i>
                 </div>
-                <div>
-                    <h3 class="font-bold text-slate-800 text-lg">{{ cat.name }}</h3>
-                    <div class="flex items-center gap-2 mt-0.5 text-xs font-medium"
-                         [ngClass]="(cat.type || 'EXPENSE') === 'EXPENSE' ? 'text-red-500' : 'text-emerald-500'">
-                        <i class="fa-solid" [ngClass]="(cat.type || 'EXPENSE') === 'EXPENSE' ? 'fa-arrow-trend-down' : 'fa-arrow-trend-up'"></i>
-                        {{ (cat.type || 'EXPENSE') === 'EXPENSE' ? 'Dépense' : 'Revenu' }}
+                
+                <!-- Info -->
+                <div class="flex-1 pr-6 pt-1">
+                    <h3 class="font-bold text-slate-800 dark:text-white text-[15px] leading-none">{{ cat.name }}</h3>
+                    <p class="text-slate-400 dark:text-slate-500 text-[11px] font-medium mt-1 line-clamp-1">
+                        {{ cat.description || 'Aucune description fournie.' }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Actions (Chevron + Ellipsis) -->
+            <div class="flex items-center text-slate-400 dark:text-slate-500 gap-3">
+                <i class="fa-solid fa-chevron-right text-xs"></i>
+                <div class="relative group/actions" *ngIf="isAdmin || !cat.isGlobal">
+                    <button class="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </button>
+                    <!-- Tooltip actions -->
+                    <div class="absolute right-0 top-full mt-1 bg-white dark:bg-slate-800 shadow-xl rounded-xl p-2 opacity-0 pointer-events-none group-hover/actions:opacity-100 group-hover/actions:pointer-events-auto transition-opacity z-10 w-32 border border-slate-100 dark:border-slate-700">
+                        <button (click)="openModal(cat)" class="w-full text-left px-3 py-2 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors mb-1">
+                            <i class="fa-solid fa-pen mr-2 text-indigo-500"></i> Modifier
+                        </button>
+                        <button (click)="deleteCategory(cat)" class="w-full text-left px-3 py-2 rounded-lg text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-slate-700 transition-colors">
+                            <i class="fa-solid fa-trash mr-2"></i> Supprimer
+                        </button>
                     </div>
                 </div>
             </div>
-            
-            <p class="text-slate-500 text-sm h-10 line-clamp-2">
-                {{ cat.description || 'Aucune description fournie.' }}
-            </p>
         </div>
         
-        <div *ngIf="filteredCategories.length === 0" class="col-span-full text-center py-20 text-slate-500">
-            Aucune catégorie de {{ currentTab === 'EXPENSE' ? 'dépense' : 'revenu' }} trouvée.
+        <div *ngIf="filteredCategories.length === 0" class="col-span-full text-center py-20 text-slate-500 dark:text-slate-400">
+            <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 mx-auto">
+                <i class="fa-solid fa-layer-group text-2xl text-slate-300 dark:text-slate-600"></i>
+            </div>
+            <p class="font-medium">Aucune catégorie de {{ currentTab === 'EXPENSE' ? 'dépense' : 'revenu' }} trouvée.</p>
         </div>
     </div>
 </div>
 
-<!-- Modal Ajout Catégorie -->
-<div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity duration-300"
+<!-- Modal Ajout Catégorie (Bottom Sheet on Mobile) -->
+<div class="fixed inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-md z-[100] flex items-end md:items-center justify-center md:p-4 transition-opacity duration-300"
      [class.hidden]="!isModalOpen"
      [class.opacity-0]="!isModalOpen"
-     [class.pointer-events-none]="!isModalOpen">
+     [class.pointer-events-none]="!isModalOpen"
+     (click)="closeModal()">
     
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-transform duration-300"
-         [class.scale-95]="!isModalOpen"
-         [class.scale-100]="isModalOpen">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-md overflow-hidden transform transition-all duration-300 border border-transparent dark:border-slate-800
+                rounded-t-[2rem] md:rounded-3xl shadow-[0_-20px_40px_rgba(0,0,0,0.1)] md:shadow-2xl 
+                max-h-[90vh] flex flex-col"
+         [ngClass]="isModalOpen ? 'translate-y-0 md:scale-100' : 'translate-y-full md:translate-y-0 md:scale-95'"
+         (click)="$event.stopPropagation()">
         
-        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-            <h2 class="text-xl font-bold text-slate-800">{{ editingCategoryId ? 'Modifier la Catégorie' : 'Nouvelle Catégorie' }}</h2>
-            <button (click)="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 flex items-center justify-center transition-colors">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+        <!-- Drag Handle (Mobile Only) -->
+        <div class="w-full flex justify-center pt-3 pb-1 md:hidden bg-slate-50 dark:bg-slate-800/50">
+            <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full"></div>
+        </div>
+        
+        <div class="relative overflow-hidden bg-slate-50 dark:bg-slate-800/50 p-5 md:p-6 border-b border-slate-100 dark:border-slate-800 flex-shrink-0">
+            <div class="flex justify-between items-center relative z-10">
+                <h2 class="text-xl font-display font-bold text-slate-800 dark:text-white">{{ editingCategoryId ? 'Modifier la Catégorie' : 'Nouvelle Catégorie' }}</h2>
+                <button (click)="closeModal()" class="w-8 h-8 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-white flex items-center justify-center transition-colors shadow-sm">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
         </div>
 
-        <form class="p-6 space-y-5" (submit)="onSubmit($event)">
+        <form class="p-5 md:p-6 space-y-5 md:space-y-6 overflow-y-auto" (submit)="onSubmit($event)">
             
-            <!-- Type -->
-            <div class="flex p-1 bg-slate-100 rounded-xl">
-                <button type="button" (click)="setType('EXPENSE')" [ngClass]="newCategory.type === 'EXPENSE' ? 'bg-white shadow-sm text-slate-800 font-semibold' : 'text-slate-500 hover:text-slate-700'" class="flex-1 py-2 rounded-lg text-sm transition-all">
-                    <i class="fa-solid fa-arrow-trend-down text-red-500 mr-1" *ngIf="newCategory.type === 'EXPENSE'"></i> Sortie
+            <!-- Type (Pill) -->
+            <div class="flex p-1.5 bg-slate-100/80 dark:bg-slate-800/80 rounded-2xl">
+                <button type="button" (click)="setType('EXPENSE')" 
+                        [ngClass]="newCategory.type === 'EXPENSE' ? 'bg-white dark:bg-slate-700 shadow-sm text-slate-800 dark:text-white font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'" 
+                        class="flex-1 py-2.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-arrow-trend-down text-red-500" *ngIf="newCategory.type === 'EXPENSE'"></i> Sortie
                 </button>
-                <button type="button" (click)="setType('INCOME')" [ngClass]="newCategory.type === 'INCOME' ? 'bg-white shadow-sm text-slate-800 font-semibold' : 'text-slate-500 hover:text-slate-700'" class="flex-1 py-2 rounded-lg text-sm transition-all">
-                    <i class="fa-solid fa-arrow-trend-up text-emerald-500 mr-1" *ngIf="newCategory.type === 'INCOME'"></i> Entrée
+                <button type="button" (click)="setType('INCOME')" 
+                        [ngClass]="newCategory.type === 'INCOME' ? 'bg-white dark:bg-slate-700 shadow-sm text-slate-800 dark:text-white font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'" 
+                        class="flex-1 py-2.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-arrow-trend-up text-emerald-500" *ngIf="newCategory.type === 'INCOME'"></i> Entrée
                 </button>
             </div>
 
             <!-- Nom -->
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Nom de la catégorie</label>
-                <input type="text" name="name" [(ngModel)]="newCategory.name" required placeholder="Ex: Restaurant, Cinéma..." class="block w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-slate-50 text-sm">
+                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Nom de la catégorie</label>
+                <input type="text" name="name" [(ngModel)]="newCategory.name" required placeholder="Ex: Restaurant, Cinéma..." 
+                       class="block w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/30 focus:border-indigo-500 bg-white dark:bg-slate-800 text-slate-800 dark:text-white text-sm font-medium outline-none transition-all placeholder-slate-400 dark:placeholder-slate-500">
             </div>
 
             <!-- Icon Selector -->
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">Icône</label>
+                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Icône</label>
                 <div class="flex flex-wrap gap-2">
                     <button type="button" *ngFor="let icon of predefinedIcons" (click)="selectIcon(icon)"
-                            class="w-10 h-10 rounded-lg flex items-center justify-center transition-all"
-                            [ngClass]="newCategory.icon === icon ? 'bg-indigo-100 text-primary border border-indigo-200' : 'bg-slate-50 text-slate-400 border border-transparent hover:bg-slate-100'">
+                            class="w-10 h-10 rounded-xl flex items-center justify-center transition-all border"
+                            [ngClass]="newCategory.icon === icon ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-500/50 shadow-inner' : 'bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'">
                         <i class="fa-solid {{ icon }}"></i>
                     </button>
                 </div>
@@ -127,31 +165,38 @@
 
             <!-- Color Selector -->
             <div>
-                <label class="block text-sm font-medium text-slate-700 mb-2">Couleur</label>
-                <div class="flex flex-wrap gap-2">
+                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Couleur</label>
+                <div class="flex flex-wrap gap-3">
                     <button type="button" *ngFor="let color of predefinedColors" (click)="selectColor(color)"
-                            class="w-8 h-8 rounded-full shadow-sm transition-transform flex items-center justify-center"
+                            class="w-8 h-8 rounded-full shadow-sm transition-transform flex items-center justify-center relative"
                             [style.backgroundColor]="color"
-                            [class.scale-110]="newCategory.color === color">
+                            [class.scale-125]="newCategory.color === color"
+                            [class.ring-2]="newCategory.color === color"
+                            [class.ring-offset-2]="newCategory.color === color"
+                            [class.ring-offset-white]="true"
+                            [class.dark:ring-offset-slate-900]="true"
+                            [style.ringColor]="color">
                         <i class="fa-solid fa-check text-white text-xs" *ngIf="newCategory.color === color"></i>
                     </button>
                 </div>
             </div>
 
             <!-- Visibility (Admin only) -->
-            <div *ngIf="isAdmin" class="flex items-center gap-3 p-3 bg-indigo-50/50 rounded-xl border border-indigo-100">
-                <input type="checkbox" id="isGlobal" name="isGlobal" [(ngModel)]="newCategory.isGlobal" class="w-4 h-4 text-primary rounded border-indigo-300 focus:ring-primary">
-                <label for="isGlobal" class="text-sm font-medium text-indigo-900 cursor-pointer">
-                    Rendre cette catégorie globale (visible pour tous les utilisateurs)
+            <div *ngIf="isAdmin" class="flex items-center gap-3 p-4 bg-indigo-50/50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-500/30">
+                <input type="checkbox" id="isGlobal" name="isGlobal" [(ngModel)]="newCategory.isGlobal" 
+                       class="w-4 h-4 text-indigo-600 dark:text-indigo-500 rounded border-indigo-300 dark:border-indigo-700 focus:ring-indigo-500 bg-white dark:bg-slate-900 cursor-pointer">
+                <label for="isGlobal" class="text-sm font-bold text-indigo-900 dark:text-indigo-300 cursor-pointer">
+                    Rendre globale (visible pour tous)
                 </label>
             </div>
 
             <!-- Actions -->
             <div class="pt-4 flex gap-3">
-                <button type="button" (click)="closeModal()" class="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors">
+                <button type="button" (click)="closeModal()" class="w-1/3 px-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                     Annuler
                 </button>
-                <button type="submit" [disabled]="isSaving || !newCategory.name" class="flex-1 px-4 py-3 rounded-xl bg-primary hover:bg-indigo-700 text-white font-medium shadow-md shadow-indigo-200 transition-colors flex justify-center items-center gap-2 disabled:opacity-50">
+                <button type="submit" [disabled]="isSaving || !newCategory.name" 
+                        class="w-2/3 px-4 py-3.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold shadow-lg shadow-indigo-200/50 dark:shadow-indigo-900/50 hover:shadow-xl hover:shadow-indigo-300/50 dark:hover:shadow-indigo-800/50 transition-all flex justify-center items-center gap-2 transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                     <ng-container *ngIf="!isSaving"><i class="fa-solid fa-check"></i> Enregistrer</ng-container>
                     <ng-container *ngIf="isSaving"><i class="fa-solid fa-circle-notch fa-spin"></i> Création...</ng-container>
                 </button>

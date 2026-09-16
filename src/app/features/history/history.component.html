@@ -1,173 +1,176 @@
-<div class="bg-surface md:rounded-3xl md:p-6 md:border md:border-slate-100 md:shadow-sm animate-fade-in max-w-2xl mx-auto md:max-w-none">
+<div class="bg-surface dark:bg-transparent rounded-t-[2rem] md:rounded-3xl px-5 py-6 md:p-6 md:border-none md:shadow-none animate-fade-in max-w-2xl mx-auto md:max-w-none">
     
+    <div *ngIf="adminViewUserId" class="mb-6 p-4 rounded-xl bg-purple-50 dark:bg-purple-900/30 border border-purple-100 dark:border-purple-500/30 text-purple-700 dark:text-purple-400 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-user-shield text-xl"></i>
+            <span class="font-medium">Mode administrateur : Historique de l'utilisateur #{{ adminViewUserId }}</span>
+        </div>
+        <a [routerLink]="['/admin']" class="text-sm font-bold hover:underline">Retour</a>
+    </div>
+
     <!-- Filtres -->
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6 md:pb-6 md:border-b border-slate-100">
-        <div class="relative w-full md:w-96 shadow-sm rounded-2xl">
+    <div class="flex flex-col gap-3 mb-6">
+        <!-- Barre de recherche -->
+        <div class="relative w-full">
             <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-            <input type="text" [(ngModel)]="searchTerm" (input)="filterHistory()" placeholder="Rechercher une raison..." class="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary focus:outline-none text-sm text-slate-700 font-medium">
+            <input type="text" [(ngModel)]="searchTerm" (input)="filterHistory()" placeholder="Rechercher une transaction..." class="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1.2rem] focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/30 focus:border-indigo-500 text-sm font-bold text-slate-700 dark:text-slate-300 outline-none transition-shadow shadow-[0_2px_10px_rgba(0,0,0,0.03)] placeholder-slate-400">
         </div>
         
-        <div class="flex flex-col md:flex-row flex-wrap gap-3 w-full md:w-auto mt-4 md:mt-0">
-            <select [(ngModel)]="typeFilter" (change)="filterHistory()" class="flex-1 md:flex-none px-4 py-3 bg-white border border-slate-100 rounded-2xl text-sm font-medium text-slate-600 focus:outline-none focus:border-primary shadow-sm appearance-none">
-                <option value="all">Tous les types</option>
-                <option value="EXPENSE">Sorties (Dépenses)</option>
-                <option value="INCOME">Entrées (Revenus)</option>
-            </select>
-            <select [(ngModel)]="catFilter" (change)="filterHistory()" class="flex-1 md:flex-none px-4 py-3 bg-white border border-slate-100 rounded-2xl text-sm font-medium text-slate-600 focus:outline-none focus:border-primary shadow-sm appearance-none">
-                <option value="all">Toutes les catégories</option>
-                <option value="Alimentation">Alimentation</option>
-                <option value="Transport">Transport</option>
-                <option value="Logement">Logement</option>
-                <option value="Loisirs">Loisirs</option>
-                <option value="Shopping">Shopping</option>
-                <option value="Autres">Autres</option>
-            </select>
-            <div class="flex-1 md:flex-none flex items-center gap-2">
-                <input type="date" [(ngModel)]="startDate" (change)="filterHistory()" class="w-full px-4 py-3 bg-white border border-slate-100 rounded-2xl text-sm font-medium text-slate-600 focus:outline-none focus:border-primary shadow-sm">
-                <span class="text-slate-400 text-sm">à</span>
-                <input type="date" [(ngModel)]="endDate" (change)="filterHistory()" class="w-full px-4 py-3 bg-white border border-slate-100 rounded-2xl text-sm font-medium text-slate-600 focus:outline-none focus:border-primary shadow-sm">
+        <!-- Menus déroulants et dates -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="relative">
+                <select [(ngModel)]="typeFilter" (change)="filterHistory()" class="block w-full pl-3 pr-8 py-2.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1rem] text-[11px] font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/30 appearance-none shadow-[0_2px_10px_rgba(0,0,0,0.03)]">
+                    <option value="all">Tous types</option>
+                    <option value="EXPENSE">Sorties</option>
+                    <option value="INCOME">Entrées</option>
+                </select>
+                <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
+            </div>
+            
+            <div class="relative">
+                <select [(ngModel)]="catFilter" (change)="filterHistory()" class="block w-full pl-3 pr-8 py-2.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1rem] text-[11px] font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/30 appearance-none shadow-[0_2px_10px_rgba(0,0,0,0.03)]">
+                    <option value="all">Toutes catégo.</option>
+                    <option value="Alimentation">Alimentation</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Logement">Logement</option>
+                    <option value="Loisirs">Loisirs</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Autres">Autres</option>
+                </select>
+                <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
+            </div>
+            
+            <div class="col-span-2 flex items-center gap-2">
+                <input type="date" [(ngModel)]="startDate" (change)="filterHistory()" class="w-full px-2.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1rem] text-[11px] font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/30 shadow-[0_2px_10px_rgba(0,0,0,0.03)]">
+                <span class="text-slate-300 dark:text-slate-600 text-[10px]"><i class="fa-solid fa-arrow-right"></i></span>
+                <input type="date" [(ngModel)]="endDate" (change)="filterHistory()" class="w-full px-2.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[1rem] text-[11px] font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/30 shadow-[0_2px_10px_rgba(0,0,0,0.03)]">
             </div>
         </div>
     </div>
 
     <!-- Dashboard Cards Header -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         
         <!-- Solde Actuel -->
-        <div class="bg-gradient-to-br from-primary to-secondary rounded-2xl p-6 text-white shadow-lg shadow-indigo-200 card-hover relative overflow-hidden">
-            <div class="absolute -right-6 -top-6 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
-            <div class="flex justify-between items-start">
+        <div class="col-span-2 lg:col-span-1 bg-gradient-to-br from-[#6366f1] to-[#8b5cf6] rounded-[1.2rem] p-4 md:p-5 text-white shadow-lg shadow-indigo-200/50 dark:shadow-indigo-900/50 relative overflow-hidden flex flex-col justify-center">
+            <div class="absolute -right-6 -top-6 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+            
+            <div class="relative z-10 flex justify-between items-center">
                 <div>
-                    <p class="text-indigo-100 font-medium mb-1">Solde (Filtré)</p>
-                    <h3 class="text-3xl font-bold">{{ dashBalance | number:'1.2-2' }} DH</h3>
+                    <p class="text-indigo-100 font-bold text-[9px] md:text-[10px] tracking-widest uppercase mb-1">Solde</p>
+                    <h3 class="text-xl md:text-3xl font-display font-bold tabular">{{ dashBalance | number:'1.2-2' }} DH</h3>
                 </div>
-                <div class="w-10 h-10 rounded-lg bg-white bg-opacity-20 flex items-center justify-center backdrop-blur-sm">
-                    <i class="fa-solid fa-building-columns"></i>
+                <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-md">
+                    <i class="fa-solid fa-building-columns text-sm md:text-lg"></i>
                 </div>
-            </div>
-            <div class="mt-4 text-sm text-indigo-100 flex items-center gap-1">
-                Toutes transactions incluses
             </div>
         </div>
 
         <!-- Revenus (Entrées) -->
-        <div class="bg-surface rounded-2xl p-6 border border-slate-100 shadow-sm card-hover relative overflow-hidden">
-            <div class="absolute -right-4 -bottom-4 opacity-5 text-6xl text-emerald-500"><i class="fa-solid fa-arrow-trend-up"></i></div>
-            <div class="flex justify-between items-start mb-4">
-                <div>
-                    <p class="text-slate-500 font-medium mb-1">Entrées (Filtrées)</p>
-                    <h3 class="text-2xl font-bold text-slate-800">{{ dashTotalIncomes | number:'1.2-2' }} DH</h3>
-                </div>
-                <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center">
-                    <i class="fa-solid fa-arrow-trend-up"></i>
-                </div>
+        <div class="bg-white dark:bg-slate-900 rounded-[1.2rem] p-3 md:p-5 shadow-[0_2px_10px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.4)] relative flex flex-col justify-center border border-slate-100 dark:border-slate-800">
+            <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-[1.2rem] rounded-r-full bg-emerald-500"></div>
+            <div class="pl-2">
+                <p class="text-[8px] md:text-[10px] font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase mb-0.5">Entrées</p>
+                <h3 class="text-sm md:text-xl font-display font-bold text-slate-800 dark:text-white tabular">{{ dashTotalIncomes | number:'1.0-0' }} DH</h3>
             </div>
-            <p class="text-xs text-slate-400">Total des revenus perçus</p>
         </div>
 
         <!-- Dépenses (Sorties) -->
-        <div class="bg-surface rounded-2xl p-6 border border-slate-100 shadow-sm card-hover relative overflow-hidden">
-            <div class="absolute -right-4 -bottom-4 opacity-5 text-6xl text-red-500"><i class="fa-solid fa-arrow-trend-down"></i></div>
-            <div class="flex justify-between items-start mb-4">
-                <div>
-                    <p class="text-slate-500 font-medium mb-1">Sorties (Filtrées)</p>
-                    <h3 class="text-2xl font-bold text-slate-800">{{ dashTotalExpenses | number:'1.2-2' }} DH</h3>
-                </div>
-                <div class="w-10 h-10 rounded-lg bg-red-50 text-red-500 flex items-center justify-center">
-                    <i class="fa-solid fa-arrow-trend-down"></i>
-                </div>
+        <div class="bg-white dark:bg-slate-900 rounded-[1.2rem] p-3 md:p-5 shadow-[0_2px_10px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.4)] relative flex flex-col justify-center border border-slate-100 dark:border-slate-800">
+            <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-[1.2rem] rounded-r-full bg-red-500"></div>
+            <div class="pl-2">
+                <p class="text-[8px] md:text-[10px] font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase mb-0.5">Sorties</p>
+                <h3 class="text-sm md:text-xl font-display font-bold text-slate-800 dark:text-white tabular">{{ dashTotalExpenses | number:'1.0-0' }} DH</h3>
             </div>
-            <p class="text-xs text-slate-400">Total des dépenses effectuées</p>
         </div>
 
         <!-- Nombre de transactions -->
-        <div class="bg-surface rounded-2xl p-6 border border-slate-100 shadow-sm card-hover">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-slate-500 font-medium mb-1">Transactions</p>
-                    <h3 class="text-2xl font-bold text-slate-800">{{ dashCount }}</h3>
-                </div>
-                <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center">
-                    <i class="fa-solid fa-receipt"></i>
-                </div>
-            </div>
-            <div class="mt-4 text-sm text-slate-500">
-                Moyenne sortie/jour: <span class="font-medium text-slate-700">{{ dashAverage | number:'1.0-0' }} DH</span>
+        <div class="bg-white dark:bg-slate-900 rounded-[1.2rem] p-3 md:p-5 shadow-[0_2px_10px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.4)] relative flex flex-col justify-center border border-slate-100 dark:border-slate-800">
+            <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-[1.2rem] rounded-r-full bg-blue-500"></div>
+            <div class="pl-2">
+                <p class="text-[8px] md:text-[10px] font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase mb-0.5">Opérations</p>
+                <h3 class="text-sm md:text-xl font-display font-bold text-slate-800 dark:text-white tabular">{{ dashCount }}</h3>
             </div>
         </div>
     </div>
 
     <!-- Transactions Mobile List -->
     <div class="md:hidden flex flex-col gap-3">
-        <div *ngFor="let exp of filteredExpenses" class="bg-white rounded-2xl p-4 flex items-center shadow-sm border border-slate-100 active:scale-[0.98] transition-transform">
-            <!-- Date -->
-            <div class="flex flex-col items-center justify-center w-12 text-center mr-4 border-r border-slate-100 pr-4">
-                <span class="text-lg font-bold text-slate-800 leading-tight">{{ exp.expenseDate | date:'dd' }}</span>
-                <span class="text-[10px] font-medium text-slate-400 uppercase leading-tight">{{ exp.expenseDate | date:'MMM' }}</span>
-                <span class="text-[10px] text-slate-400 leading-tight">{{ exp.expenseDate | date:'yyyy' }}</span>
+        <div *ngFor="let exp of filteredExpenses" class="bg-white dark:bg-slate-900 rounded-[1.2rem] p-3 shadow-[0_2px_10px_rgba(0,0,0,0.03)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.4)] flex items-center justify-between border border-slate-100 dark:border-slate-800 active:scale-[0.98] transition-transform">
+            
+            <div class="flex items-center gap-3 w-full">
+                <div class="flex flex-col items-center justify-center w-10 text-center border-r border-slate-100 dark:border-slate-800 pr-3">
+                    <span class="text-base font-display font-bold text-slate-800 dark:text-white leading-none">{{ exp.expenseDate | date:'dd' }}</span>
+                    <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase mt-0.5 tracking-wider">{{ exp.expenseDate | date:'MMM' }}</span>
+                </div>
+                
+                <div class="flex-1 min-w-0 flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl {{ getConf(exp.category.name).bg }} {{ getConf(exp.category.name).text }} flex items-center justify-center text-sm shrink-0">
+                        <i class="fa-solid {{ getConf(exp.category.name).icon }}"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <h4 class="font-bold text-slate-800 dark:text-white text-sm truncate">{{ exp.reason }}</h4>
+                        <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{{ exp.category.name }}</span>
+                    </div>
+                </div>
+                
+                <div class="text-right flex flex-col items-end shrink-0 pl-2">
+                    <span class="font-display font-bold text-sm tabular-nums leading-none" [ngClass]="exp.category.type === 'INCOME' ? 'text-emerald-500' : 'text-slate-800 dark:text-white'">
+                        {{ exp.category.type === 'INCOME' ? '+' : '-' }}{{ exp.amount | number:'1.0-0' }} <span class="text-[9px] font-bold text-slate-400 dark:text-slate-500 ml-0.5">DH</span>
+                    </span>
+                </div>
             </div>
             
-            <!-- Category and Reason -->
-            <div class="flex-1 min-w-0">
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide mb-1 {{ getConf(exp.category.name).bg }} {{ getConf(exp.category.name).text }}">
-                    <i class="fa-solid {{ getConf(exp.category.name).icon }}"></i> {{ exp.category.name }}
-                </span>
-                <p class="font-semibold text-slate-700 text-sm truncate">{{ exp.reason }}</p>
-            </div>
-            
-            <!-- Amount -->
-            <div class="flex flex-col items-end gap-1 ml-2">
-                <span class="font-bold text-sm" [ngClass]="exp.category.type === 'INCOME' ? 'text-emerald-500' : 'text-slate-800'">
-                    {{ exp.category.type === 'INCOME' ? '+' : '' }}{{ exp.amount | number:'1.2-2' }}
-                </span>
-                <span class="text-[10px] font-bold text-slate-400">DH</span>
-            </div>
-            
-            <i class="fa-solid fa-chevron-right text-slate-300 ml-4 text-xs flex-shrink-0"></i>
+            <!-- Actions -->
+            <button class="ml-2 w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-red-500 flex items-center justify-center shrink-0 border border-slate-100 dark:border-slate-700" (click)="deleteExpense(exp.id)">
+                <i class="fa-solid fa-trash text-[10px]"></i>
+            </button>
         </div>
 
-        <div *ngIf="filteredExpenses.length === 0" class="text-center py-10 text-slate-500 animate-fade-in bg-white rounded-2xl border border-slate-100 shadow-sm">
+        <div *ngIf="filteredExpenses.length === 0" class="text-center py-10 text-slate-500 dark:text-slate-400 animate-fade-in bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
             <i class="fa-solid fa-receipt text-4xl mb-3 opacity-50"></i>
-            <p>Aucune dépense trouvée.</p>
+            <p class="font-medium">Aucune dépense trouvée.</p>
         </div>
     </div>
 
     <!-- Tableau Desktop -->
-    <div class="hidden md:block overflow-x-auto bg-surface rounded-3xl border border-slate-100 shadow-sm">
+    <div class="hidden md:block overflow-x-auto glass-panel rounded-[2rem] border border-slate-100 dark:border-slate-700 shadow-sm">
         <table class="w-full text-left border-collapse">
             <thead>
-                <tr class="text-slate-400 text-sm border-b border-slate-100">
-                    <th class="px-6 py-4 font-medium">Date</th>
-                    <th class="px-6 py-4 font-medium">Catégorie</th>
-                    <th class="px-6 py-4 font-medium">Raison</th>
-                    <th class="px-6 py-4 font-medium text-right">Montant</th>
-                    <th class="px-6 py-4 font-medium text-center">Actions</th>
+                <tr class="text-slate-400 dark:text-slate-500 text-sm border-b border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30">
+                    <th class="px-6 py-5 font-bold uppercase tracking-wider text-[11px]">Date</th>
+                    <th class="px-6 py-5 font-bold uppercase tracking-wider text-[11px]">Catégorie</th>
+                    <th class="px-6 py-5 font-bold uppercase tracking-wider text-[11px]">Raison</th>
+                    <th class="px-6 py-5 font-bold uppercase tracking-wider text-[11px] text-right">Montant</th>
+                    <th class="px-6 py-5 font-bold uppercase tracking-wider text-[11px] text-center">Actions</th>
                 </tr>
             </thead>
             <tbody class="text-sm">
-                <tr *ngFor="let exp of filteredExpenses" class="border-b border-slate-50 hover:bg-slate-50 transition-colors group">
-                    <td class="px-6 py-4 text-slate-500">{{ exp.expenseDate | date:'dd MMM yyyy' }}</td>
+                <tr *ngFor="let exp of filteredExpenses" class="border-b border-slate-50 dark:border-slate-700/30 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                    <td class="px-6 py-4 text-slate-500 dark:text-slate-400 font-medium">{{ exp.expenseDate | date:'dd MMM yyyy' }}</td>
                     <td class="px-6 py-4">
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium {{ getConf(exp.category.name).bg }} {{ getConf(exp.category.name).text }}">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold {{ getConf(exp.category.name).bg }} {{ getConf(exp.category.name).text }}">
                             <i class="fa-solid {{ getConf(exp.category.name).icon }}"></i> {{ exp.category.name }}
                         </span>
                     </td>
-                    <td class="px-6 py-4 font-medium text-slate-800">{{ exp.reason }}</td>
-                    <td class="px-6 py-4 font-bold text-right" [ngClass]="exp.category.type === 'INCOME' ? 'text-emerald-500' : 'text-slate-800'">
+                    <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-200">{{ exp.reason }}</td>
+                    <td class="px-6 py-4 font-display font-bold text-right" [ngClass]="exp.category.type === 'INCOME' ? 'text-emerald-500' : 'text-slate-800 dark:text-white'">
                         {{ exp.category.type === 'INCOME' ? '+' : '-' }}{{ exp.amount | number:'1.2-2' }} DH
                     </td>
                     <td class="px-6 py-4 text-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="text-slate-400 hover:text-red-500 mx-1" (click)="deleteExpense(exp.id)" title="Supprimer">
-                            <i class="fa-solid fa-trash"></i>
+                        <button class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-400 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-500/30 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all flex items-center justify-center mx-auto shadow-sm" (click)="deleteExpense(exp.id)" title="Supprimer">
+                            <i class="fa-solid fa-trash text-xs"></i>
                         </button>
                     </td>
                 </tr>
             </tbody>
         </table>
         
-        <div *ngIf="filteredExpenses.length === 0" class="text-center py-10 text-slate-500 animate-fade-in">
-            <i class="fa-solid fa-receipt text-4xl mb-3 opacity-50"></i>
-            <p>Aucune dépense trouvée.</p>
+        <div *ngIf="filteredExpenses.length === 0" class="text-center py-16 text-slate-500 dark:text-slate-400 animate-fade-in">
+            <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 mx-auto">
+                <i class="fa-solid fa-receipt text-2xl text-slate-300 dark:text-slate-600"></i>
+            </div>
+            <p class="font-medium">Aucune dépense trouvée pour cette période.</p>
         </div>
     </div>
 </div>

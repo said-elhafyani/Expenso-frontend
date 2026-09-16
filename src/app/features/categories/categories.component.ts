@@ -18,6 +18,14 @@ export class CategoriesComponent implements OnInit {
   isLoading = true;
   isAdmin = false;
   
+  get expenseCount(): number {
+    return this.categories.filter(c => (c.type || 'EXPENSE') === 'EXPENSE').length;
+  }
+
+  get incomeCount(): number {
+    return this.categories.filter(c => c.type === 'INCOME').length;
+  }
+  
   isModalOpen = false;
   isSaving = false;
   editingCategoryId: number | null = null;

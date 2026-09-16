@@ -39,10 +39,11 @@ export class AppComponent implements OnInit {
       .filter(k => this.mockService.categoryConfig[k].type === 'INCOME');
   }
   currentUser: any = null;
+  isDarkTheme = false;
 
   constructor(
-    private mockService: MockDataService, 
-    private router: Router, 
+    private mockService: MockDataService,
+    private router: Router,
     public authService: AuthService,
     private categoryService: CategoryService,
     private expenseService: ExpenseService
@@ -62,14 +63,33 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Getters handle the categories dynamically
-    
+    // Initialiser le thème
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      this.isDarkTheme = true;
+      document.documentElement.classList.add('dark');
+    } else {
+      this.isDarkTheme = false;
+      document.documentElement.classList.remove('dark');
+    }
+
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
       if (user) {
         this.loadRealCategories();
       }
     });
+  }
+
+  toggleTheme() {
+    this.isDarkTheme = !this.isDarkTheme;
+    if (this.isDarkTheme) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
   }
 
   loadRealCategories() {

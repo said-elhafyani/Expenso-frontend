@@ -10,7 +10,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,10 +24,12 @@
   <!-- Configuration Tailwind personnalisée -->
   <script>
       tailwind.config = {
+          darkMode: 'class',
           theme: {
               extend: {
                   fontFamily: {
                       sans: ['Outfit', 'sans-serif'],
+                      display: ['Fraunces', 'serif'],
                   },
                   colors: {
                       primary: '#4f46e5', // Indigo 600
@@ -39,6 +41,8 @@
                   animation: {
                       'fade-in': 'fadeIn 0.3s ease-out',
                       'slide-up': 'slideUp 0.4s ease-out',
+                      'float': 'floatAnim 6s ease-in-out infinite',
+                      'stamp': 'stampIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards',
                   },
                   keyframes: {
                       fadeIn: {
@@ -48,6 +52,14 @@
                       slideUp: {
                           '0%': { opacity: '0', transform: 'translateY(20px)' },
                           '100%': { opacity: '1', transform: 'translateY(0)' },
+                      },
+                      floatAnim: {
+                          '0%, 100%': { transform: 'translateY(0) rotate(-2deg)' },
+                          '50%': { transform: 'translateY(-10px) rotate(-2deg)' },
+                      },
+                      stampIn: {
+                          '0%': { opacity: '0', transform: 'scale(1.6) rotate(-18deg)' },
+                          '100%': { opacity: '1', transform: 'scale(1) rotate(-12deg)' },
                       }
                   }
               }
