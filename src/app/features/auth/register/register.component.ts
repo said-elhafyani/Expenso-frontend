@@ -79,8 +79,8 @@ export class RegisterComponent {
     this.authService.register({ name, email, password }).subscribe({
       next: data => {
         this.isLoading = false;
-        this.successMessage = "Inscription réussie ! Vous allez être redirigé...";
-        setTimeout(() => this.router.navigate(['/login']), 2000);
+        this.successMessage = "Inscription réussie ! Vous allez être redirigé vers votre espace...";
+        setTimeout(() => this.router.navigate(['/dashboard']), 1000);
       },
       error: err => {
         this.isLoading = false;

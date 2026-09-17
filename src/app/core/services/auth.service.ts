@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, switchMap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 const AUTH_API = environment.apiUrl + '/auth/';
@@ -34,7 +34,9 @@ export class AuthService {
       name: user.name,
       email: user.email,
       password: user.password
-    }, { responseType: 'text' });
+    }, { responseType: 'text' }).pipe(
+      switchMap(() => this.login({ email: user.email, password: user.password }))
+    );
   }
 
   logout(): void {

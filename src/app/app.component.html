@@ -36,7 +36,7 @@
             <div class="w-8 flex items-center justify-center text-lg transition-transform group-hover:scale-110" routerLinkActive="text-indigo-600 dark:text-indigo-400" [routerLinkActiveOptions]="{exact: true}">
                 <i class="fa-solid fa-chart-pie"></i>
             </div>
-            Tableau de bord
+            Dashboard
         </a>
 
         <a routerLink="/history" routerLinkActive="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 font-bold" [routerLinkActiveOptions]="{exact: true}"
@@ -109,10 +109,7 @@
 
             <div class="flex items-center gap-2 mt-1">
                 <!-- Notifications -->
-                <button class="w-10 h-10 rounded-full bg-white/20 border border-white/20 text-white flex items-center justify-center relative backdrop-blur-md shadow-sm transition-transform active:scale-95">
-                    <i class="fa-solid fa-bell text-sm"></i>
-                    <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-indigo-500"></span>
-                </button>
+
                 
                 <!-- Theme Toggle -->
                 <button (click)="toggleTheme()" class="w-10 h-10 rounded-full bg-white/20 border border-white/20 text-white flex items-center justify-center backdrop-blur-md shadow-sm transition-transform active:scale-95">
@@ -146,7 +143,7 @@
     </a>
     <a routerLink="/dashboard" routerLinkActive="text-indigo-600 dark:text-indigo-400 font-bold active-nav-tab" [routerLinkActiveOptions]="{exact: true}" class="relative flex flex-col items-center justify-center w-16 h-full text-slate-400 dark:text-slate-500 transition-all duration-300 gap-1.5 hover:text-slate-600 dark:hover:text-slate-300 group">
         <i class="fa-solid fa-chart-pie text-xl transition-transform group-hover:-translate-y-1"></i>
-        <span class="text-[10px] font-medium">Accueil</span>
+        <span class="text-[10px] font-medium">Dashboard</span>
     </a>
     <a routerLink="/categories" routerLinkActive="text-indigo-600 dark:text-indigo-400 font-bold active-nav-tab" class="relative flex flex-col items-center justify-center w-16 h-full text-slate-400 dark:text-slate-500 transition-all duration-300 gap-1.5 hover:text-slate-600 dark:hover:text-slate-300 group">
         <i class="fa-solid fa-layer-group text-xl transition-transform group-hover:-translate-y-1"></i>

@@ -40,13 +40,25 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       this.router.navigate(['/dashboard']);
     }
     // Restore theme preference
-    const saved = localStorage.getItem('expenso-theme');
-    this.isDarkTheme = saved ? saved === 'dark' : true;
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      this.isDarkTheme = true;
+      document.documentElement.classList.add('dark');
+    } else {
+      this.isDarkTheme = false;
+      document.documentElement.classList.remove('dark');
+    }
   }
 
   toggleTheme() {
     this.isDarkTheme = !this.isDarkTheme;
-    localStorage.setItem('expenso-theme', this.isDarkTheme ? 'dark' : 'light');
+    if (this.isDarkTheme) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
   }
 
   ngAfterViewInit() {
